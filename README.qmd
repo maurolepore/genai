@@ -45,14 +45,8 @@ Create the necesasary tools:
 file_writer <- tool(
   base::writeLines,
   "Writes text to a file.",
-  text = type_string(
-    "A character string.",
-    required = TRUE
-  ),
-  con = type_string(
-    "The path to the file to write.",
-    required = TRUE
-  )
+  text = type_string("A character string.", required = TRUE),
+  con = type_string("The path to the file to write.", required = TRUE)
 )
 ```
 
@@ -80,7 +74,7 @@ chat$chat(
   - In the first 5 pages find the table of contents
   - Extract the table of contents for chapter 6: 'Guide for Authors'
   - Present it without page number in the format '1.1. Section Title'
-  - Write it to authors-guide.md
+  - Write it to authors-contents.md
 )"
 )
 ```
@@ -90,7 +84,7 @@ Provide the necessary context:
 ```{r}
 chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
 chat$register_tool(file_writer)
-on.exit(unlink("authors-guide.md"))
+on.exit(unlink("authors-contents.md"))
 
 chat$chat(
   content_pdf_url("https://devguide.ropensci.org/ropensci-dev-guide.pdf"),
@@ -98,13 +92,28 @@ chat$chat(
   - In the first 5 pages find the table of contents
   - Extract the table of contents for chapter 6: 'Guide for Authors'
   - Present it without page number in the format '1.1. Section Title'
-  - Write it to authors-guide.md
+  - Write it to authors-contents.md
   )"
 )
 
-readLines("authors-guide.md")
+readLines("authors-contents.md")
+```
 
-# Clean up
-unlink("authors-guide.md")
+
+
+```{r}
+chat <- chat_openai(system_prompt = "You are a friendly rOpenSci editor.")
+
+chat$chat(c(
+  "Is the ixplorer package in scope for rOpenSci software-review?",
+  "# rOpenSci package categories in scope for sofware-review",
+  readLines(
+    "https://raw.githubusercontent.com/ropensci/dev_guide/refs/heads/main/softwarereview_policies.Rmd"
+  ),
+  "# DESCRIPTION of the ixplorer package",
+  readLines(
+    "https://raw.githubusercontent.com/ixpantia/ixplorer/refs/heads/master/DESCRIPTION"
+  )
+))
 ```
 
