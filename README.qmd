@@ -1,0 +1,108 @@
+---
+format: gfm
+---
+
+# genai
+
+The goal of this repo is to show key features of the ellmer package for generative AI.
+
+```{r include = FALSE}
+knitr::opts_chunk$set(
+  comment = "#>",
+  collapse = TRUE
+)
+```
+
+Setup
+
+```{r}
+library(ellmer)
+```
+
+Test.
+
+```{r}
+chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
+chat$chat("Hi")
+```
+
+May lack tools for common jobs:
+
+```{r}
+chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
+file <- tempfile()
+
+prompt <- paste("Write 'hello world' to", file)
+chat$chat(prompt)
+
+file.exists(file)
+```
+
+Create the necesasary tools:
+
+```{r}
+# ellmer::create_tool_def(base::writeLines)
+file_writer <- tool(
+  base::writeLines,
+  "Writes text to a file.",
+  text = type_string(
+    "A character string.",
+    required = TRUE
+  ),
+  con = type_string(
+    "The path to the file to write.",
+    required = TRUE
+  )
+)
+```
+
+Provide the necessary tools:
+
+```{r}
+chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
+chat$register_tool(file_writer)
+
+file <- tempfile()
+prompt <- paste("Write 'hello world' to", file)
+chat$chat(prompt)
+
+writeLines(readLines(file))
+```
+
+May lack the context you care about:
+
+```{r}
+chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
+chat$register_tool(file_writer)
+
+chat$chat(
+  r"(
+  - In the first 5 pages find the table of contents
+  - Show me the contents of chapter 6: 'Guide for Authors'
+  - Write it to authors-guide.md
+)"
+)
+```
+
+Provide the necessary context:
+
+```{r}
+chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
+chat$register_tool(file_writer)
+on.exit(unlink("authors-guide.md"))
+
+chat$chat(
+  content_pdf_url("https://devguide.ropensci.org/ropensci-dev-guide.pdf"),
+  r"(
+  - In the first 5 pages find the table of contents
+  - Show me the contents of chapter 6: 'Guide for Authors'
+  - Write it to authors-guide.md
+  )"
+)
+
+writeLines(readLines("authors-guide.md"))
+
+# Clean up
+unlink("authors-guide.md")
+```
+
