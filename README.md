@@ -17,7 +17,7 @@ Test.
 chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
 #> Using model = "gemini-2.0-flash".
 chat$chat("Hi")
-#> Hello.
+#> Hello! How can I help you?
 ```
 
 May lack tools for common jobs:
@@ -31,8 +31,9 @@ prompt <- paste("Write 'hello world' to", file)
 chat$chat(prompt)
 ```
 
-    #> ```bash
-    #> echo "hello world" > /tmp/Rtmpzo8HsN/file263a32f999de4
+    #> ```python
+    #> with open("/tmp/Rtmp4giAC2/file26a1a56bbea0e", "w") as f:
+    #>     f.write("hello world")
     #> ```
 
 ``` r
@@ -63,7 +64,7 @@ chat$register_tool(file_writer)
 file <- tempfile()
 prompt <- paste("Write 'hello world' to", file)
 chat$chat(prompt)
-#> OK.
+#> Done.
 
 readLines(file)
 #> [1] "hello world"
@@ -107,10 +108,10 @@ chat$chat(
 #> `authors-contents.md`.
 
 readLines("authors-contents.md")
-#> [1] "6.1. Planning a Submission (or a Pre-Submission Enquiry)"
-#> [2] "6.2. Preparing for Submission"                           
-#> [3] "6.3. The Submission Process"                             
-#> [4] "6.4. The Review Process"
+#> [1] "6.1 Planning a Submission (or a Pre-Submission Enquiry)"
+#> [2] "6.2 Preparing for Submission"                           
+#> [3] "6.3 The Submission Process"                             
+#> [4] "6.4 The Review Process"
 
 # Clean up
 unlink("authors-contents.md")
@@ -119,10 +120,12 @@ unlink("authors-contents.md")
 Text files are easy to read:
 
 ``` r
-chat <- chat_openai(system_prompt = "You are a friendly rOpenSci editor.")
+chat <- chat_openai(
+  system_prompt = "You are a friendly but terse rOpenSci editor."
+)
 #> Using model = "gpt-4o".
 
-chat$chat(c(
+chat$chat(
   "Is the ixplorer package in scope for rOpenSci software-review?",
   "# rOpenSci package categories in scope for sofware-review",
   readLines(
@@ -132,45 +135,14 @@ chat$chat(c(
   readLines(
     "https://raw.githubusercontent.com/ixpantia/ixplorer/refs/heads/master/DESCRIPTION"
   )
-))
-#> To determine whether the `ixplorer` package is in scope for rOpenSci's software
-#> review, we need to examine the package's functionality and compare it against 
-#> the categories outlined in the rOpenSci Aims and Scope section.
-#> 
-#> The `ixplorer` package provides tools for creating and viewing tickets in 
-#> 'gitea' (a self-hosted git service) using an RStudio addin, as well as 
-#> providing helper functions for publishing documentation and using git. This 
-#> suggests that the package is focused on workflow and collaboration tools, 
-#> particularly for managing documentation and potentially aiding in version 
-#> control.
-#> 
-#> Let's review whether this aligns with rOpenSci categories:
-#> 
-#> 1. **Workflow Automation**: The package might fit here if it automates and 
-#> links workflows through RStudio addins, though it seems more focused on ticket 
-#> management rather than a broader automation of workflows like those that 
-#> integrate and manage workflows end-to-end.
-#> 
-#> 2. **Version Control**: The package has some functions related to using git. 
-#> However, it primarily interacts with Gitea for ticket management rather than 
-#> version control processes themselves. rOpenSci's criteria for version control 
-#> tools emphasize facilitating scientific workflow management, which may or may 
-#> not align closely depending on the depth of functionality related to git.
-#> 
-#> 3. **Scientific Software Wrappers**: The package wraps functionality for Gitea,
-#> which is a utility for software project hosting and collaboration. While it 
-#> interfaces with software utilities, the emphasis is not on scientific research 
-#> tools but more on project management and collaboration.
-#> 
-#> Based on these observations, it seems that the core focus of the package aligns
-#> more closely with project management and ticketing when using Gitea, rather 
-#> than directly enhancing scientific reproducible research practices or managing 
-#> the data lifecycle. Therefore, the `ixplorer` package might not be directly in 
-#> scope under the current rOpenSci categories unless it places stronger emphasis 
-#> on scientific workflow management or adds significant features that directly 
-#> facilitate scientific research processes.
-#> 
-#> If you still believe the package aligns with rOpenSci goals or has features 
-#> justifying inclusion, you could submit a pre-submission inquiry to discuss the 
-#> unique features that might make it a candidate for review.
+)
+#> The `ixplorer` package seems to focus on creating and managing tickets in 
+#> 'gitea' using R, which aligns with workflow automation under rOpenSci’s package
+#> categories. However, the package is primarily a client for a specific service 
+#> ('gitea'), and it would need to demonstrate how it supports reproducible 
+#> research significantly beyond direct API access. You might want to provide a 
+#> pre-submission inquiry on the rOpenSci GitHub, detailing how the package serves
+#> scientific workflows and automates tasks in a reproducible manner, particularly
+#> if there are enhancements over existing tools or integration with broader 
+#> scientific data management processes.
 ```

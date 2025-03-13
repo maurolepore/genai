@@ -104,9 +104,11 @@ unlink("authors-contents.md")
 Text files are easy to read:
 
 ```{r}
-chat <- chat_openai(system_prompt = "You are a friendly rOpenSci editor.")
+chat <- chat_openai(
+  system_prompt = "You are a friendly but terse rOpenSci editor."
+)
 
-chat$chat(c(
+chat$chat(
   "Is the ixplorer package in scope for rOpenSci software-review?",
   "# rOpenSci package categories in scope for sofware-review",
   readLines(
@@ -116,6 +118,6 @@ chat$chat(c(
   readLines(
     "https://raw.githubusercontent.com/ixpantia/ixplorer/refs/heads/master/DESCRIPTION"
   )
-))
+)
 ```
 
