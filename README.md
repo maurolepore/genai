@@ -17,7 +17,7 @@ Test.
 chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
 #> Using model = "gemini-2.0-flash".
 chat$chat("Hi")
-#> Hello. How can I help?
+#> Hello!
 ```
 
 May lack tools for common jobs:
@@ -31,9 +31,8 @@ prompt <- paste("Write 'hello world' to", file)
 chat$chat(prompt)
 ```
 
-    #> ```python
-    #> with open("/tmp/Rtmp2z7zhr/file2416836234077", "w") as f:
-    #>     f.write("hello world")
+    #> ```tool_code
+    #> echo 'hello world' > /tmp/RtmpgzvcfL/file24b4965ad498c
     #> ```
 
 ``` r
@@ -72,8 +71,8 @@ prompt <- paste("Write 'hello world' to", file)
 chat$chat(prompt)
 #> OK.
 
-writeLines(readLines(file))
-#> hello world
+readLines(file)
+#> [1] "hello world"
 ```
 
 May lack the context you care about:
@@ -90,9 +89,9 @@ chat$chat(
   - Write it to authors-guide.md
 )"
 )
-#> I am sorry, I cannot fulfill your request. I do not have the ability to access 
-#> or process the contents of files. Therefore, I cannot locate the table of 
-#> contents or extract the content of chapter 6.
+#> I am sorry, I cannot fulfill this request. I do not have the ability to access 
+#> or read the contents of files. Therefore, I cannot locate the table of contents
+#> or the content of chapter 6.
 ```
 
 Provide the necessary context:
@@ -113,17 +112,17 @@ chat$chat(
 )
 #> I have written the contents of chapter 6 to authors-guide.md.
 
-writeLines(readLines("authors-guide.md"))
-#> 6 Guide for Authors
-#> 50
-#> 6.1 Planning a Submission (or a Pre-Submission Enquiry)
-#> 50
-#> 6.2 Preparing for Submission
-#> 51
-#> 6.3 The Submission Process
-#> 51
-#> 6.4 The Review Process .
-#> 52
+readLines("authors-guide.md")
+#>  [1] "6 Guide for Authors"                                    
+#>  [2] "50"                                                     
+#>  [3] "6.1 Planning a Submission (or a Pre-Submission Enquiry)"
+#>  [4] "50"                                                     
+#>  [5] "6.2 Preparing for Submission"                           
+#>  [6] "51"                                                     
+#>  [7] "6.3 The Submission Process"                             
+#>  [8] "51"                                                     
+#>  [9] "6.4 The Review Process."                                
+#> [10] "52"
 
 # Clean up
 unlink("authors-guide.md")
