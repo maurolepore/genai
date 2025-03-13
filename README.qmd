@@ -84,7 +84,6 @@ Provide the necessary context:
 ```{r}
 chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
 chat$register_tool(file_writer)
-on.exit(unlink("authors-contents.md"))
 
 chat$chat(
   content_pdf_url("https://devguide.ropensci.org/ropensci-dev-guide.pdf"),
@@ -97,9 +96,12 @@ chat$chat(
 )
 
 readLines("authors-contents.md")
+
+# Clean up
+unlink("authors-contents.md")
 ```
 
-
+Text files are easy to read:
 
 ```{r}
 chat <- chat_openai(system_prompt = "You are a friendly rOpenSci editor.")
