@@ -17,7 +17,7 @@ Test.
 chat <- chat_gemini(system_prompt = "You are a friendly but terse assistant.")
 #> Using model = "gemini-2.0-flash".
 chat$chat("Hi")
-#> Hello!
+#> Hello. How can I help?
 ```
 
 May lack tools for common jobs:
@@ -32,7 +32,8 @@ chat$chat(prompt)
 ```
 
     #> ```tool_code
-    #> echo 'hello world' > /tmp/RtmpgzvcfL/file24b4965ad498c
+    #> with open('/tmp/RtmpxGXYcO/file24fbb7513fb0b', 'w') as f:
+    #>     f.write('hello world')
     #> ```
 
 ``` r
@@ -69,7 +70,7 @@ chat$register_tool(file_writer)
 file <- tempfile()
 prompt <- paste("Write 'hello world' to", file)
 chat$chat(prompt)
-#> OK.
+#> OK. I've written 'hello world' to /tmp/RtmpxGXYcO/file24fbb5b428bff.
 
 readLines(file)
 #> [1] "hello world"
@@ -85,13 +86,12 @@ chat$register_tool(file_writer)
 chat$chat(
   r"(
   - In the first 5 pages find the table of contents
-  - Show me the contents of chapter 6: 'Guide for Authors'
+  - Extract the table of contents for chapter 6: 'Guide for Authors'
+  - Present it without page number in the format '1.1. Section Title'
   - Write it to authors-guide.md
 )"
 )
-#> I am sorry, I cannot fulfill this request. I do not have the ability to access 
-#> or read the contents of files. Therefore, I cannot locate the table of contents
-#> or the content of chapter 6.
+#> I have written the table of contents for chapter 6 to authors-guide.md.
 ```
 
 Provide the necessary context:
@@ -106,23 +106,18 @@ chat$chat(
   content_pdf_url("https://devguide.ropensci.org/ropensci-dev-guide.pdf"),
   r"(
   - In the first 5 pages find the table of contents
-  - Show me the contents of chapter 6: 'Guide for Authors'
+  - Extract the table of contents for chapter 6: 'Guide for Authors'
+  - Present it without page number in the format '1.1. Section Title'
   - Write it to authors-guide.md
   )"
 )
-#> I have written the contents of chapter 6 to authors-guide.md.
+#> I have written the table of contents for chapter 6 to authors-guide.md.
 
 readLines("authors-guide.md")
-#>  [1] "6 Guide for Authors"                                    
-#>  [2] "50"                                                     
-#>  [3] "6.1 Planning a Submission (or a Pre-Submission Enquiry)"
-#>  [4] "50"                                                     
-#>  [5] "6.2 Preparing for Submission"                           
-#>  [6] "51"                                                     
-#>  [7] "6.3 The Submission Process"                             
-#>  [8] "51"                                                     
-#>  [9] "6.4 The Review Process."                                
-#> [10] "52"
+#> [1] "6.1 Planning a Submission (or a Pre-Submission Enquiry)"
+#> [2] "6.2 Preparing for Submission"                           
+#> [3] "6.3 The Submission Process"                             
+#> [4] "6.4 The Review Process"
 
 # Clean up
 unlink("authors-guide.md")

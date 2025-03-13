@@ -78,7 +78,8 @@ chat$register_tool(file_writer)
 chat$chat(
   r"(
   - In the first 5 pages find the table of contents
-  - Show me the contents of chapter 6: 'Guide for Authors'
+  - Extract the table of contents for chapter 6: 'Guide for Authors'
+  - Present it without page number in the format '1.1. Section Title'
   - Write it to authors-guide.md
 )"
 )
@@ -95,7 +96,8 @@ chat$chat(
   content_pdf_url("https://devguide.ropensci.org/ropensci-dev-guide.pdf"),
   r"(
   - In the first 5 pages find the table of contents
-  - Show me the contents of chapter 6: 'Guide for Authors'
+  - Extract the table of contents for chapter 6: 'Guide for Authors'
+  - Present it without page number in the format '1.1. Section Title'
   - Write it to authors-guide.md
   )"
 )
